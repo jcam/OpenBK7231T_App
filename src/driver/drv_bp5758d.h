@@ -3,7 +3,9 @@
 
 // Layout: Bits B[7:8]=10 (address selection identification bits), B[5:6] sleep mode if set to 00, B[0:4] Address selection
 #define BP5758D_ADDR_SLEEP   0x80  //10 00 0110: Sleep mode bits set (OUT1-5 enable setup selected, ignored by chip)
-#define BP5758D_ADDR_SETUP   0x90  //10 01 0000: OUT1-5 enable/disable setup - used during init
+#define BP5758D_ADDR_OUT     0xB0  //10 11 0000: OUT RGBCW
+#define BP5758D_ADDR_OUT_3CH 0x90  //10 01 0000: OUT RGB
+#define BP5758D_ADDR_OUT_2CH 0xA0  //10 10 0000: OUT CW
 #define BP5758D_ADDR_OUT1_CR 0x91  //10 01 0001: OUT1 current range
 #define BP5758D_ADDR_OUT2_CR 0x92  //10 01 0010: OUT2 current range
 #define BP5758D_ADDR_OUT3_CR 0x93  //10 01 0011: OUT3 current range
@@ -29,5 +31,4 @@
 #define BP5758D_15MA 0x0F // 0 0001111					// decimal 15
 #define BP5758D_65MA 0x63 // 0 1100011					// decimal 99 // wtf?
 #define BP5758D_90MA 0x7C // 0 1111100					// decimal 124 // wtf?
-
 

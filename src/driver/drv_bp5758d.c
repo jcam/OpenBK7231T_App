@@ -24,6 +24,8 @@ static void BP5758D_WriteCurrents(bool rgb, bool cw) {
 	int srcIndex;
 	byte c;
 
+	ADDLOG_DEBUG(LOG_FEATURE_DRV, "Writing currents to Lamp: rgb: %s cw: %s", rgb ? "yes" : "no", cw ? "yes" : "no");
+
 	// Set currents for OUT1-OUT5
 	for (i = 0; i < 5; i++) {
 		srcIndex = g_cfg.ledRemap.ar[i];
@@ -69,14 +71,17 @@ static void BP5758D_PreInit() {
 
 void BP5758D_Write(float *rgbcw) {
 	int i;
-	unsigned short cur_col_10[5];
+	uint16_t cur_col_10[5];
 
-	//	ADDLOG_DEBUG(LOG_FEATURE_CMD, "Writing to Lamp: %f %f %f %f %f", rgbcw[0], rgbcw[1], rgbcw[2], rgbcw[3], rgbcw[4]);
+	ADDLOG_DEBUG(LOG_FEATURE_DRV, "Write Requested: %f %f %f %f %f", rgbcw[0], rgbcw[1], rgbcw[2], rgbcw[3], rgbcw[4]);
 
 	for(i = 0; i < 5; i++){
 		// convert 0-255 to 0-1023
-		cur_col_10[i] = MAP(GetRGBCW(rgbcw, g_cfg.ledRemap.ar[i]), 0, 255.0f, 0, 1023.0f);
+		//cur_col_10[i] = MAP(GetRGBCW(rgbcw, g_cfg.ledRemap.ar[i]), 0, 255.0f, 0, 1023.0f);
+        cur_col_10[i] = (uint16_t)GetRGBCW(rgbcw, g_cfg.ledRemap.ar[i]) * 4;
 	}
+
+	ADDLOG_DEBUG(LOG_FEATURE_DRV, "Writing to Lamp: %i %i %i %i %i", cur_col_10[0], cur_col_10[1], cur_col_10[2], cur_col_10[3], cur_col_10[4]);
 
 #if WINDOWS
 	void Simulator_StoreBP5758DColor(unsigned short *data);
@@ -87,6 +92,10 @@ void BP5758D_Write(float *rgbcw) {
 	if (cur_col_10[0]==0 && cur_col_10[1]==0 && cur_col_10[2]==0 && cur_col_10[3]==0 && cur_col_10[4]==0) {
 		Soft_I2C_Start(&g_softI2C, BP5758D_ADDR_OUT); 		//Select B1: Output enable setup
 		Soft_I2C_WriteByte(&g_softI2C, BP5758D_DISABLE_OUTPUTS_ALL); //Set all outputs to OFF
+		//Set current and also both bytes for all channels to zero
+		BP5758D_WriteCurrents(false,false);
+		BP5758D_WriteCurrents(false,false);
+		BP5758D_WriteCurrents(false,false);
 		Soft_I2C_Stop(&g_softI2C); 				//Stop transmission since we have to set Sleep mode (can probably be removed)
 		Soft_I2C_Start(&g_softI2C, BP5758D_ADDR_SLEEP); 		//Enable sleep mode
 		Soft_I2C_Stop(&g_softI2C);
@@ -98,7 +107,7 @@ void BP5758D_Write(float *rgbcw) {
 		Soft_I2C_Start(&g_softI2C, BP5758D_ADDR_OUT_2CH);
 		Soft_I2C_WriteByte(&g_softI2C, BP5758D_ENABLE_OUTPUTS_ALL);
 		BP5758D_WriteCurrents(false,true);
-	} else if ((cur_col_10[0] > 0 && cur_col_10[1] > 0 && cur_col_10[2] > 0) && cur_col_10[3] == 0 && cur_col_10[4] == 0) {
+	} else if ((cur_col_10[0] > 0 || cur_col_10[1] > 0 || cur_col_10[2] > 0) && cur_col_10[3] == 0 && cur_col_10[4] == 0) {
 		Soft_I2C_Start(&g_softI2C, BP5758D_ADDR_OUT_3CH);
 		Soft_I2C_WriteByte(&g_softI2C, BP5758D_ENABLE_OUTPUTS_ALL);
 		BP5758D_WriteCurrents(true,false);

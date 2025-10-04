@@ -111,15 +111,15 @@ void BP5758D_Write(float *rgbcw) {
 	// Brigtness values are transmitted as two bytes. The light-bulb accepts a 10-bit integer (0-1023) as an input value.
 	// The first 5bits of this input are transmitted in second byte, the second 5bits in the first byte.
 	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[0] & 0x1F));  //Red
-	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[0] >> 5));
+	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)((cur_col_10[0] >> 5) & 0x1F));
 	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[1] & 0x1F)); //Green
-	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[1] >> 5));
+	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)((cur_col_10[1] >> 5) & 0x1F));
 	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[2] & 0x1F)); //Blue
-	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[2] >> 5));
+	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)((cur_col_10[2] >> 5) & 0x1F));
 	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[4] & 0x1F)); //Cold
-	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[4] >> 5));
+	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)((cur_col_10[4] >> 5) & 0x1F));
 	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[3] & 0x1F)); //Warm
-	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)(cur_col_10[3] >> 5));
+	Soft_I2C_WriteByte(&g_softI2C, (uint8_t)((cur_col_10[3] >> 5) & 0x1F));
 
 	Soft_I2C_Stop(&g_softI2C);
 }

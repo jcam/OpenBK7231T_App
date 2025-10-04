@@ -21,6 +21,8 @@
 #define BP5758D_ENABLE_OUTPUTS_ALL 0x1F
 #define BP5758D_DISABLE_OUTPUTS_ALL 0x00
 
+#define BP5758D_DELAY 2
+
 // Current values: Bit 6 to 0 represent 30mA, 32mA, 16mA, 8mA, 4mA, 2mA, 1mA respectively
 
 #define BP5758D_2MA 0x02 // 0 0000010 // added by me	// decimal 2

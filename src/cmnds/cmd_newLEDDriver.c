@@ -414,6 +414,10 @@ float led_gamma_correction (int color, float iVal) { // apply LED gamma and RGB 
 	}
 	float oVal = (powf (brightnessNormalized0to1, g_cfg.led_corr.led_gamma) * (1 - ch_bright_min) + ch_bright_min) * iVal;
 
+    float brightnessCorrectedColor = iVal * brightnessNormalized0to1;
+    
+    float jesseFinalColor = powf (brightnessCorrectedColor,  g_cfg.led_corr.led_gamma);
+
 	// apply RGB level correction:
 	if (color < 3) {
 		rgb_used_corr[color] = g_cfg.led_corr.rgb_cal[color];
@@ -423,12 +427,15 @@ float led_gamma_correction (int color, float iVal) { // apply LED gamma and RGB 
 			rgb_used_corr[color] += (1.0f - rgb_used_corr[color]) * (1.0f - sum_other_colors / led_baseColors[color]);
 		}
 		oVal *= rgb_used_corr[color];
+        jesseFinalColor *= g_cfg.led_corr.rgb_cal[color];
 	}
 
 	if (led_gamma_enable_channel_messages &&
 			(((g_lightMode == Light_RGB) && (color < 3)) || ((g_lightMode != Light_RGB) && (color >= 3)))) {
 		addLogAdv (LOG_INFO, LOG_FEATURE_CMD, "channel %i set to %.2f%%", color, oVal / 2.55);
+		addLogAdv (LOG_INFO, LOG_FEATURE_CMD, "channel %i set to %.2f%%", color, jesseFinalColor / 2.55);
 	}
+    oVal = jesseFinalColor;
 	if (oVal > 255.0f) {
 		oVal = 255.0f;
 	}

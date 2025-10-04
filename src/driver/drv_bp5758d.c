@@ -18,6 +18,12 @@ static byte g_chosenCurrent_cw = BP5758D_14MA;
 static softI2C_t g_softI2C;
 static uint16_t g_color_uint10[5];
 
+static void BP5758D_WriteAll();
+static void BP5758D_WriteBuffer(uint8_t *data, uint8_t size);
+static void BP5758D_WriteByte(uint8_t data);
+static void BP5758D_WriteBit(bool value);
+static void BP5758D_PreInit();
+
 #define CONVERT_CURRENT_BP5758D(curVal) (curVal>63) ? (curVal+34) : curVal;
 
 static void BP5758D_SetCurrent(byte curValRGB, byte curValCW) {
@@ -39,7 +45,7 @@ void BP5758D_Write(float *rgbcw) {
 	BP5758D_WriteAll();
 }
 
-void BP5758D_WriteAll() {
+static void BP5758D_WriteAll() {
 	uint8_t data[17];
 	ADDLOG_DEBUG(LOG_FEATURE_DRV, "Writing to Lamp: %i %i %i %i %i", g_color_uint10[0], g_color_uint10[1], g_color_uint10[2], g_color_uint10[3], g_color_uint10[4]);
 
